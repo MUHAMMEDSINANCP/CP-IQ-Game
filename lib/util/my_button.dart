@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import '../const.dart';
 
 // ignore: must_be_immutable
 class MyButton extends StatelessWidget {
   final String child;
+  final TextStyle? textStyle;
   final VoidCallback onTap;
   var buttonColor = Colors.deepPurple[400];
 
@@ -11,6 +11,7 @@ class MyButton extends StatelessWidget {
     Key? key,
     required this.child,
     required this.onTap,
+    required this.textStyle,
   }) : super(key: key);
 
   @override
@@ -21,6 +22,8 @@ class MyButton extends StatelessWidget {
       buttonColor = Colors.orange;
     } else if (child == '=') {
       buttonColor = Colors.green;
+    } else if (child == 'NEXT') {
+      buttonColor = Colors.brown;
     }
 
     return Padding(
@@ -35,7 +38,7 @@ class MyButton extends StatelessWidget {
           child: Center(
             child: Text(
               child,
-              style: whiteTextStyle,
+              style: textStyle,
             ),
           ),
         ),

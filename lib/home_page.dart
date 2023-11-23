@@ -1,5 +1,5 @@
 import 'dart:math';
-
+import 'package:confetti/confetti.dart';
 import 'package:cp_iq_game/const.dart';
 import 'package:cp_iq_game/util/my_button.dart';
 import 'package:cp_iq_game/util/result_message.dart';
@@ -13,7 +13,30 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  // number pad list
+  late ConfettiController _confettiController;
+
+  @override
+  void initState() {
+    super.initState();
+    _confettiController = ConfettiController(
+      duration: const Duration(seconds: 3),
+    );
+    generateNewQuestion(); // Generate initial question
+  }
+
+  void generateNewQuestion() {
+    setState(() {
+      numberA = Random().nextInt(100);
+      numberB = Random().nextInt(1000);
+    });
+  }
+
+  @override
+  void dispose() {
+    _confettiController.dispose();
+    super.dispose();
+  }
+
   List<String> numberPad = [
     '7',
     '8',
@@ -26,23 +49,22 @@ class _HomePageState extends State<HomePage> {
     '1',
     '2',
     '3',
-    '=',
+    'NEXT',
+    '',
     '0',
+    '',
+    '=',
   ];
 
-  // number A, number B
-  int numberA = 1;
-  int numberB = 1;
+  int? numberA;
+  int? numberB;
 
-  // user answer
   String userAnswer = '';
 
-  // user tapped a button
   void buttonTapped(String button) {
     setState(() {
       if (button == '=') {
         if (userAnswer.isEmpty) {
-          // Show a snackbar if the answer field is empty
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               backgroundColor: Colors.redAccent,
@@ -58,193 +80,196 @@ class _HomePageState extends State<HomePage> {
             ),
           );
         } else {
-          // Calculate if the user is correct or incorrect
           checkResult();
         }
       } else if (button == 'C') {
-        // Clear the input
         userAnswer = '';
       } else if (button == 'DEL') {
-        // Delete the last number
         if (userAnswer.isNotEmpty) {
           userAnswer = userAnswer.substring(0, userAnswer.length - 1);
         }
+      } else if (button == 'NEXT') {
+        generateNewQuestion();
+        userAnswer = ''; // Reset user's answer when displaying a new question
       } else if (userAnswer.length < 9) {
-        // Maximum of 3 numbers can be inputted
         userAnswer += button;
       }
     });
   }
 
-  // check if user is correct or not
   void checkResult() {
-    if (numberA + numberB == int.parse(userAnswer)) {
+    if (numberA != null &&
+        numberB != null &&
+        ((numberA! + numberB!) == int.parse(userAnswer) ||
+            (numberA! * numberB!) == int.parse(userAnswer))) {
+      _confettiController.play();
+
       showDialog(
-          context: context,
-          builder: (context) {
-            return ResultMessage(
-              topmessage: 'Yay! Well-Done.',
-              color: Colors.green,
-              message: 'Correct Answer',
-              onTap: goToNextQuestion,
-              icon: Icons.arrow_forward,
-            );
-          });
+        context: context,
+        builder: (context) {
+          return ResultMessage(
+            topmessage: 'Yay! Well-Done.',
+            color: Colors.green,
+            message: 'Correct Answer',
+            onTap: goToNextQuestion,
+            icon: Icons.arrow_forward,
+          );
+        },
+      );
     } else {
       showDialog(
-          context: context,
-          builder: (context) {
-            return ResultMessage(
-              topmessage: 'Oops! Try again.',
-              color: Colors.redAccent,
-              message: 'Wrong Answer',
-              onTap: goBackToQuestion,
-              icon: Icons.rotate_left,
-            );
-          });
+        context: context,
+        builder: (context) {
+          return ResultMessage(
+            topmessage: 'Oops! Try again.',
+            color: Colors.redAccent,
+            message: 'Wrong Answer',
+            onTap: goBackToQuestion,
+            icon: Icons.rotate_left,
+          );
+        },
+      );
     }
   }
 
-  // create random numbers
-  var randomNumber = Random();
-
-  // GO TO NEXT QUESTION
   void goToNextQuestion() {
-    // dismiss alert dialog
     Navigator.of(context).pop();
 
-    // reset values
     setState(() {
       userAnswer = '';
+      generateNewQuestion();
     });
-
-    // create a new question
-    numberA = randomNumber.nextInt(10);
-    numberB = randomNumber.nextInt(10);
   }
 
-  // GO BACK TO QUESTION
   void goBackToQuestion() {
-    // dismiss alert dialog
     Navigator.of(context).pop();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        actions: const [
-          Padding(
-            padding: EdgeInsets.only(right: 8),
-            child: Icon(
-              Icons.calculate_outlined,
-              size: 39,
-            ),
-          ),
-        ],
-        leading: const Icon(
-          Icons.calculate_rounded,
-          size: 38,
-        ),
-        centerTitle: true,
-        toolbarHeight: 64,
-        backgroundColor: Colors.deepPurple,
-        title: RichText(
-          text: const TextSpan(
-            style: TextStyle(
-              fontSize: 25, // Adjust the font size as needed
-              fontWeight: FontWeight.normal, // Set the default font weight
-              color: Colors.white, // Set the default text color
-            ),
-            children: [
-              TextSpan(
-                text: 'CP', // Your bold text here
-                style: TextStyle(
-                  letterSpacing: 3,
-                  fontWeight: FontWeight.bold,
-                  // You can add any other styles specific to the bold text here
+    return Stack(
+      alignment: Alignment.topCenter,
+      children: [
+        Scaffold(
+          appBar: AppBar(
+            actions: const [
+              Padding(
+                padding: EdgeInsets.only(right: 8),
+                child: Icon(
+                  Icons.calculate_outlined,
+                  size: 39,
                 ),
               ),
-              TextSpan(text: ' IQ Game'), // Rest of the text
             ],
-          ),
-        ),
-      ),
-      backgroundColor: Colors.deepPurple[300],
-      body: SingleChildScrollView(
-        scrollDirection: Axis.vertical,
-        physics: const BouncingScrollPhysics(),
-        child: Column(
-          children: [
-            // level progress, player needs 5 correct answers in a row to proceed to next level
-            // Container(
-            //   height: 160,
-            //   color: Colors.deepPurple,
-            // ),
-
-            // question
-            Center(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+            leading: const Icon(
+              Icons.calculate_rounded,
+              size: 38,
+            ),
+            centerTitle: true,
+            toolbarHeight: 64,
+            backgroundColor: Colors.deepPurple,
+            title: RichText(
+              text: const TextSpan(
+                style: TextStyle(
+                  fontSize: 25,
+                  fontWeight: FontWeight.normal,
+                  color: Colors.white,
+                ),
                 children: [
-                  // question
-                  const SizedBox(
-                    height: 200,
-                  ),
-                  Text(
-                    '$numberA + $numberB = ',
-                    style: whiteTextStyle,
-                  ),
-                  const SizedBox(
-                    width: 6,
-                  ),
-                  // answer box
-                  Container(
-                    padding: const EdgeInsets.all(10),
-                    constraints: const BoxConstraints(
-                      minHeight: 51,
-                      maxHeight: 51,
-                      minWidth: 65,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.deepPurple[400],
-                      borderRadius: BorderRadius.circular(4),
-                    ),
-                    child: Center(
-                      child: Text(
-                        userAnswer,
-                        style: whiteTextStyle,
-                      ),
+                  TextSpan(
+                    text: 'CP',
+                    style: TextStyle(
+                      letterSpacing: 3,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
+                  TextSpan(text: ' IQ Game'),
                 ],
               ),
             ),
-
-            // number pad
-            SizedBox(
-              height: 500,
-              child: Padding(
-                padding: const EdgeInsets.all(4.0),
-                child: GridView.builder(
-                  scrollDirection: Axis.vertical,
-                  itemCount: numberPad.length,
-                  physics: const BouncingScrollPhysics(),
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 4,
+          ),
+          backgroundColor: Colors.deepPurple[300],
+          body: SingleChildScrollView(
+            scrollDirection: Axis.vertical,
+            physics: const BouncingScrollPhysics(),
+            child: Column(
+              children: [
+                Center(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const SizedBox(
+                        height: 200,
+                      ),
+                      Text(
+                        '${numberA ?? ''} + ${numberB ?? ''} = ',
+                        style: whiteTextStyle,
+                      ),
+                      const SizedBox(
+                        width: 6,
+                      ),
+                      Container(
+                        padding: const EdgeInsets.all(10),
+                        constraints: const BoxConstraints(
+                          minHeight: 51,
+                          maxHeight: 51,
+                          minWidth: 65,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.deepPurple[400],
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: Center(
+                          child: Text(
+                            userAnswer,
+                            style: whiteTextStyle,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                  itemBuilder: (context, index) {
-                    return MyButton(
-                      child: numberPad[index],
-                      onTap: () => buttonTapped(numberPad[index]),
-                    );
-                  },
                 ),
-              ),
+                SizedBox(
+                  height: 500,
+                  child: Padding(
+                    padding: const EdgeInsets.all(4.0),
+                    child: GridView.builder(
+                      scrollDirection: Axis.vertical,
+                      itemCount: numberPad.length,
+                      physics: const BouncingScrollPhysics(),
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 4,
+                      ),
+                      itemBuilder: (context, index) {
+                        return MyButton(
+                          textStyle: numberPad[index] == 'NEXT'
+                              ? const TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                )
+                              : whiteTextStyle,
+                          child: numberPad[index],
+                          onTap: () => buttonTapped(numberPad[index]),
+                        );
+                      },
+                    ),
+                  ),
+                ),
+              ],
             ),
-          ],
+          ),
         ),
-      ),
+        ConfettiWidget(
+          blastDirectionality: BlastDirectionality.explosive,
+          confettiController: _confettiController,
+          blastDirection: pi / 2,
+          emissionFrequency: 0.50,
+          numberOfParticles: 4,
+          gravity: 0.76,
+        ),
+      ],
     );
   }
 }
