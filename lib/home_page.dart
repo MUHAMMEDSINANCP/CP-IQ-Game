@@ -134,22 +134,25 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       appBar: AppBar(
         actions: const [
-          Icon(
-            Icons.calculate_outlined,
-            size: 45,
+          Padding(
+            padding: EdgeInsets.only(right: 8),
+            child: Icon(
+              Icons.calculate_outlined,
+              size: 39,
+            ),
           ),
         ],
         leading: const Icon(
           Icons.calculate_rounded,
-          size: 45,
+          size: 38,
         ),
         centerTitle: true,
-        toolbarHeight: 80,
+        toolbarHeight: 64,
         backgroundColor: Colors.deepPurple,
         title: RichText(
           text: const TextSpan(
             style: TextStyle(
-              fontSize: 28, // Adjust the font size as needed
+              fontSize: 25, // Adjust the font size as needed
               fontWeight: FontWeight.normal, // Set the default font weight
               color: Colors.white, // Set the default text color
             ),
@@ -199,9 +202,9 @@ class _HomePageState extends State<HomePage> {
                   Container(
                     padding: const EdgeInsets.all(10),
                     constraints: const BoxConstraints(
-                      minHeight: 50,
-                      maxHeight: 50,
-                      minWidth: 80,
+                      minHeight: 51,
+                      maxHeight: 51,
+                      minWidth: 65,
                     ),
                     decoration: BoxDecoration(
                       color: Colors.deepPurple[400],
