@@ -100,8 +100,7 @@ class _HomePageState extends State<HomePage> {
   void checkResult() {
     if (numberA != null &&
         numberB != null &&
-        ((numberA! + numberB!) == int.parse(userAnswer) ||
-            (numberA! * numberB!) == int.parse(userAnswer))) {
+        (numberA! + numberB!) == int.parse(userAnswer)) {
       _confettiController.play();
 
       showDialog(
@@ -152,18 +151,29 @@ class _HomePageState extends State<HomePage> {
       children: [
         Scaffold(
           appBar: AppBar(
-            actions: const [
+            actions: [
               Padding(
-                padding: EdgeInsets.only(right: 8),
-                child: Icon(
-                  Icons.calculate_outlined,
-                  size: 39,
-                ),
-              ),
+                  padding: const EdgeInsets.only(right: 7),
+                  child: IconButton(
+                    tooltip: "Confetti Effect",
+                    onPressed: () {
+                      _confettiController.play();
+                    },
+                    icon: const Icon(
+                      Icons.calculate_outlined,
+                      size: 40,
+                    ),
+                  )),
             ],
-            leading: const Icon(
-              Icons.calculate_rounded,
-              size: 38,
+            leading: IconButton(
+              tooltip: "Confetti Effect",
+              onPressed: () {
+                _confettiController.play();
+              },
+              icon: const Icon(
+                Icons.calculate_rounded,
+                size: 39,
+              ),
             ),
             centerTitle: true,
             toolbarHeight: 64,
