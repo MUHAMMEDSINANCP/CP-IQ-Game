@@ -1,16 +1,17 @@
-# cp_iq_game
+## CP IQ Game
 
-A new Flutter project.
+CP IQ Game is a dynamic Flutter application designed to enhance users' mathematical skills and elevate their IQ levels through engaging math challenges. Developed with clean architecture, clean code, and Flutter state management, it offers an interactive platform for practicing various math challenges.
 
-## Getting Started
+### Key Features:
 
-This project is a starting point for a Flutter application.
+Mathematical Challenges : Engaging games to improve math calculation skills and boost IQ levels.
 
-A few resources to get you started if this is your first Flutter project:
+Confetti Celebration : Enjoy a confetti effect upon answering questions correctly for added celebration.
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+Skip Feature : Allows users to skip challenging questions and proceed to the next level.
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+### Usage:
+CP IQ Game empowers users to enhance their mathematics proficiency and IQ level through interactive math challenges. Experience a stimulating learning environment while enjoying the confetti celebration upon successful answers.
+
+### Feedback:
+For any suggestions or feedback, please contact us at cpmuhammedsinan@gmail.com. Your insights are invaluable for enhancing CP IQ Game.
